@@ -1,4 +1,5 @@
 import { Request, Response, NextFunction } from "express";
+import logger from "../config/logger";
 
 interface CustomError extends Error {
   status?: number;
@@ -17,6 +18,8 @@ const globalErrorHandler = (
     ? { error: err.message, type: err.type }
     : `Something went wrong: ${err.type}`;
   const stackTrace = dev ? err.stack : null;
+
+  logger.error(`${err.message}`, { stack: err.stack });
 
   res
     .status(err.status || 500)
