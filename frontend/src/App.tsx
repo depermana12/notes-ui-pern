@@ -23,7 +23,7 @@ const App = () => {
         base: "1fr",
         lg: "250px 1fr",
       }}
-      h="100vh"
+      minH="100vh"
       gap="2"
       color="blackAlpha.700"
       fontWeight="bold"

@@ -13,8 +13,10 @@ const NavMenu = () => {
   return (
     <Flex as="nav">
       <HStack>
-        <FileCode2 size={30} />
-        <Heading as="h1">Notes</Heading>
+        <FileCode2 size={28} />
+        <Heading as="h1" size="lg">
+          Notes
+        </Heading>
       </HStack>
       <Spacer />
       <UnorderedList
