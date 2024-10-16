@@ -35,6 +35,10 @@ export const getPaginatedNotes = async (
   };
 };
 
+export const getAllNotes = async (): Promise<Note[]> => {
+  return await db.getNotes();
+};
+
 export const findNoteById = async (noteId: number): Promise<Note> => {
   const note = await db.getNote(noteId);
   if (!note) throw new DatabaseError("Note not found", 404);

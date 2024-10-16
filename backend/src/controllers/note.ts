@@ -20,6 +20,16 @@ export const getNotesByPagination = asyncHandler(async (req, res) => {
   });
 });
 
+export const getNotes = asyncHandler(async (req, res) => {
+  const notes = await noteService.getAllNotes();
+  res.status(200).json({
+    message: "success",
+    data: {
+      notes,
+    },
+  });
+});
+
 export const getNoteById = asyncHandler(async (req, res) => {
   const noteId = Number(req.params.id);
   const note = await noteService.findNoteById(noteId);
