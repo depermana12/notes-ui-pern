@@ -1,4 +1,6 @@
+import SignUp from "../features/auth/signup";
+
 const Signup = () => {
-  return <div>create account here</div>;
+  return <SignUp />;
 };
 export default Signup;

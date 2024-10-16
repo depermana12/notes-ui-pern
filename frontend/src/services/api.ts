@@ -11,13 +11,21 @@ class ApiService<T> {
     this.apiResourcePath = apiResourcePath;
   }
 
-  async getAll(axiosReqConfig: AxiosRequestConfig) {
+  getAll = async (axiosReqConfig: AxiosRequestConfig) => {
     const result = await apiClient.get<FetchApiResponse<T>>(
       this.apiResourcePath,
       axiosReqConfig,
     );
     return result.data;
-  }
+  };
+
+  post = async (axiosReqConfig: AxiosRequestConfig) => {
+    const result = await apiClient.post<FetchApiResponse<T>>(
+      this.apiResourcePath,
+      axiosReqConfig.data,
+    );
+    return result.data;
+  };
 }
 
 export default ApiService;

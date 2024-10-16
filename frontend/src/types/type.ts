@@ -20,7 +20,15 @@ export interface Pagination {
   pagination: PaginationProps;
 }
 
+export interface User {
+  user_id: number;
+  email: string;
+  password: string;
+  created_at: Date;
+  updated_at: Date;
+}
+
 export interface FetchApiResponse<T> {
   message: string;
-  data: T[] | T;
+  data: T;
 }

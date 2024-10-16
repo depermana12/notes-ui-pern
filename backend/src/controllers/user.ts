@@ -11,6 +11,12 @@ export const createUser = asyncHandler(async (req, res) => {
 
   const newUserToken = await userService.saveUser(username, email, password);
 
+  res.cookie("noteapp_authn", newUserToken, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "strict",
+  });
+
   res
     .status(201)
     .json({ message: "user created", data: { token: newUserToken } });
