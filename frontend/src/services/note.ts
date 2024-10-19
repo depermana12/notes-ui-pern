@@ -1,5 +1,5 @@
 import ApiService from "./api";
-import { Note } from "../types/type";
+import { Pagination } from "../types/type";
 
-const noteService = new ApiService<Note[]>("/notes");
+const noteService = new ApiService<Pagination>("/notes");
 export default noteService;

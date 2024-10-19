@@ -1,6 +1,7 @@
 import { Grid, GridItem, Show } from "@chakra-ui/react";
 import Navbar from "../components/Navbar";
-import { Outlet } from "react-router-dom";
+// import { Outlet } from "react-router-dom";
+import NoteCardGrid from "../components/NoteCardGrid";
 
 const MainLayout = () => {
   return (
@@ -25,11 +26,9 @@ const MainLayout = () => {
         lg: "250px 1fr",
       }}
       minH="100vh"
-      gap="2"
-      color="blackAlpha.700"
-      fontWeight="bold"
+      gap="4"
     >
-      <GridItem bg="orange.300" alignContent="center" area={"header"}>
+      <GridItem bg="white" shadow="base" alignContent="center" area={"header"}>
         <Navbar />
       </GridItem>
       <Show above="lg">
@@ -37,8 +36,9 @@ const MainLayout = () => {
           aside
         </GridItem>
       </Show>
-      <GridItem bg="green.300" area={"main"}>
-        <Outlet />
+      <GridItem area={"main"}>
+        {/* <Outlet /> */}
+        <NoteCardGrid />
       </GridItem>
       <GridItem bg="blue.300" area={"footer"}>
         Footer

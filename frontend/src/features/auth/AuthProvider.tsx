@@ -17,15 +17,16 @@ export const AuthProvider = ({ children }: Props) => {
 
     if (storedUser && storedToken) {
       setUser(JSON.parse(storedUser));
-      setToken(JSON.parse(storedToken));
+      setToken(storedToken);
     }
   }, []);
 
   useEffect(() => {
     if (token) {
       axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+    } else {
+      delete axios.defaults.headers.common["Authorization"];
     }
-    delete axios.defaults.headers.common["Authorization"];
   }, [token]);
 
   const handleAuth = (user: UserData, token: string) => {
@@ -33,7 +34,7 @@ export const AuthProvider = ({ children }: Props) => {
     localStorage.setItem("user", JSON.stringify(user));
 
     setToken(token);
-    localStorage.setItem("token", JSON.stringify(token));
+    localStorage.setItem("token", token);
   };
 
   const registerUser = (user: UserData, token: string) => {

@@ -12,6 +12,15 @@ class ApiService<T> {
   }
 
   getAll = async (axiosReqConfig: AxiosRequestConfig) => {
+    const token = localStorage.getItem("token");
+
+    if (token) {
+      axiosReqConfig.headers = {
+        ...axiosReqConfig.headers,
+        Authorization: `Bearer ${token}`,
+      };
+    }
+
     const result = await apiClient.get<FetchApiResponse<T>>(
       this.apiResourcePath,
       axiosReqConfig,
