@@ -43,7 +43,7 @@ export const getNoteById = asyncHandler(async (req, res) => {
 
 export const createNote = asyncHandler(async (req, res) => {
   const { title, content } = req.body;
-  const userId = Number(req.user.user_id);
+  const userId = Number(req.user.id);
 
   if (!userId) {
     throw new Error("User not found");
@@ -61,7 +61,7 @@ export const createNote = asyncHandler(async (req, res) => {
 export const updateNote = asyncHandler(async (req, res) => {
   const { title, content } = req.body;
   const noteId = Number(req.params.id);
-  const userId = Number(req.user.user_id);
+  const userId = Number(req.user.id);
 
   if (!userId) {
     throw new Error("User not found");
@@ -78,7 +78,7 @@ export const updateNote = asyncHandler(async (req, res) => {
 
 export const deleteNote = asyncHandler(async (req, res) => {
   const noteId = Number(req.params.id);
-  const userId = Number(req.user.user_id);
+  const userId = Number(req.user.id);
 
   if (!userId) {
     throw new Error("User not found");

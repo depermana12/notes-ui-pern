@@ -1,48 +1,26 @@
-import { Grid, GridItem, Show } from "@chakra-ui/react";
-import Navbar from "./components/Navbar";
+import { Routes, Route } from "react-router-dom";
+import MainLayout from "./layouts/MainLayout";
+import AuthLayout from "./layouts/AuthLayout";
+import ProtectedRouteLayout from "./layouts/ProtectedRouteLayout";
+import SignUp from "./features/auth/SignUp";
+import CardForm from "./components/CardForm";
+import SignIn from "./features/auth/SignIn";
+import { AuthProvider } from "./features/auth/AuthProvider";
 
 const App = () => {
   return (
-    <Grid
-      templateAreas={{
-        base: `
-        "header"
-        "main"
-        "footer"`,
-        lg: `
-        "header header"
-        "aside  main" 
-        "footer footer"
-         `,
-      }}
-      gridTemplateRows={{
-        base: "50px 1fr 50px",
-        lg: "50px 1fr 50px",
-      }}
-      gridTemplateColumns={{
-        base: "1fr",
-        lg: "250px 1fr",
-      }}
-      minH="100vh"
-      gap="2"
-      color="blackAlpha.700"
-      fontWeight="bold"
-    >
-      <GridItem bg="orange.300" alignContent="center" area={"header"}>
-        <Navbar />
-      </GridItem>
-      <Show above="lg">
-        <GridItem maxWidth="250" bg="pink.300" area={"aside"}>
-          aside
-        </GridItem>
-      </Show>
-      <GridItem bg="green.300" area={"main"}>
-        Main
-      </GridItem>
-      <GridItem bg="blue.300" area={"footer"}>
-        Footer
-      </GridItem>
-    </Grid>
+    <AuthProvider>
+      <Routes>
+        <Route path="/" element={<AuthLayout />}>
+          <Route index element={<CardForm />} />
+          <Route path="signup" element={<SignUp />} />
+          <Route path="signin" element={<SignIn />} />
+        </Route>
+        <Route element={<ProtectedRouteLayout />}>
+          <Route path="/dashboard" element={<MainLayout />} />
+        </Route>
+      </Routes>
+    </AuthProvider>
   );
 };
 export default App;

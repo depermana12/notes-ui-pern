@@ -1,6 +1,10 @@
 import ApiService from "./api";
-import { User } from "../types/type";
+import { SignUpResponse } from "../types/type";
 
-const authService = new ApiService<User>("/auth/signup");
+export const signUp = new ApiService<SignUpResponse>("/auth/signup");
+export const signIn = new ApiService<SignUpResponse>("/auth/signin");
 
-export default authService;
+export default {
+  signUp,
+  signIn,
+};

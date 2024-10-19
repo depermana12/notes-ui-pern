@@ -1,15 +1,63 @@
 import pool from "./db";
-import { User } from "../schemas/user";
+import { User, RefreshToken } from "../schemas/user";
 
-type Field = "user_id" | "email" | "username";
+type Field = "id" | "email" | "username";
 type UpdateUser = "username" | "email" | "password";
 
 export const findAllUsers = async (): Promise<User[]> => {
   const { rows } = await pool.query<User>(
-    `SELECT user_id, username, email, created_at
+    `SELECT id, username, email, created_at
        FROM users`,
   );
   return rows;
+};
+
+export const saveRefreshToken = async (
+  token: string,
+  userId: number,
+  expiresIn: Date,
+): Promise<RefreshToken> => {
+  const { rows } = await pool.query<RefreshToken>(
+    `INSERT INTO refresh_token(token, user_id, expires_at)
+       VALUES($1, $2, $3) RETURNING *`,
+    [token, userId, expiresIn],
+  );
+  return rows[0];
+};
+
+export const findRefreshToken = async (
+  userId: number,
+): Promise<RefreshToken | null> => {
+  const { rows } = await pool.query<RefreshToken>(
+    `SELECT * 
+       FROM refresh_token
+     WHERE user_id = $1`,
+    [userId],
+  );
+  return rows[0];
+};
+
+export const renewRefreshToken = async (
+  userId: number,
+  newToken: string,
+  expires: Date,
+): Promise<RefreshToken> => {
+  const { rows } = await pool.query<RefreshToken>(
+    `
+    UPDATE refresh_token SET token = $1, expires_at = $2 WHERE user_id = $3 RETURNING *
+    `,
+    [newToken, expires, userId],
+  );
+
+  return rows[0];
+};
+
+export const deleteRefreshToken = async (id: number): Promise<boolean> => {
+  const deleted = await pool.query(
+    `DELETE FROM refresh_token WHERE user_id = $1`,
+    [id],
+  );
+  return deleted.rowCount !== null && deleted.rowCount > 0;
 };
 
 export const findUserBy = async (
@@ -46,13 +94,13 @@ export const updateUserBy = async (
   const { rows } = await pool.query<User>(
     `UPDATE users
        SET ${field} = $1
-     WHERE user_id = $2 RETURNING *`,
+     WHERE id = $2 RETURNING *`,
     [value, id],
   );
   return rows[0];
 };
 
 export const deleteUser = async (id: number): Promise<boolean> => {
-  const result = await pool.query(`DELETE FROM users WHERE user_id = $1`, [id]);
+  const result = await pool.query(`DELETE FROM users WHERE id = $1`, [id]);
   return result.rowCount !== null && result.rowCount > 0;
 };

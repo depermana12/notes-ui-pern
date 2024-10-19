@@ -7,18 +7,12 @@ const authorization = (
   res: Response,
   next: NextFunction,
 ): void => {
-  // const bearer = req.headers.authorization;
-  // if (!bearer || !bearer.startsWith("Bearer ")) {
-  //   throw new UnauthorizedError("Unauthorized access");
-  // }
+  const bearer = req.headers.authorization;
+  if (!bearer || !bearer.startsWith("Bearer ")) {
+    throw new UnauthorizedError("Unauthorized access");
+  }
 
-  // const [, token] = bearer.split(" ");
-  // if (!token) {
-  //   throw new UnauthorizedError("Unauthorized token");
-  // }
-
-  const token = req.cookies.token;
-
+  const [, token] = bearer.split(" ");
   if (!token) {
     throw new UnauthorizedError("Unauthorized token");
   }

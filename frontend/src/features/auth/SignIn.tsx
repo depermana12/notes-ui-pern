@@ -1,9 +1,6 @@
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import CardAuth from "./CardAuth";
-import authService from "../../services/auth";
-
 import {
   FormControl,
   FormLabel,
@@ -14,68 +11,60 @@ import {
   InputRightElement,
 } from "@chakra-ui/react";
 
+import CardAuth from "./CardAuth";
+import authService from "../../services/auth";
+import { Link, useNavigate } from "react-router-dom";
+
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import useAuth from "../../hooks/useAuth";
 
-const signUpSchema = z.object({
-  username: z.string().min(3).max(20),
+const signInSchema = z.object({
   email: z.string().email(),
-  password: z.string().min(6),
+  password: z.string().min(8),
 });
 
-type signUpFormData = z.infer<typeof signUpSchema>;
+type signInFormData = z.infer<typeof signInSchema>;
 
-const SignUp = () => {
+const SignIn = () => {
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<signUpFormData>({
-    resolver: zodResolver(signUpSchema),
+  } = useForm<signInFormData>({
+    resolver: zodResolver(signInSchema),
   });
 
+  const { login } = useAuth();
   const [show, setShow] = useState(false);
-  const { registerUser } = useAuth();
   const navigate = useNavigate();
 
   const handleClickShowPassword = () => setShow(!show);
-
-  const onSubmit = async (data: signUpFormData) => {
+  const onSubmit = async (data: signInFormData) => {
     try {
-      const response = await authService.signUp.post({ data });
+      const response = await authService.signIn.post({ data });
 
       if (response.data) {
-        registerUser(
+        console.log(response);
+        login(
           { username: response.data.username, email: response.data.email },
           response.data.token,
         );
         navigate("/dashboard");
       }
     } catch (error) {
-      console.error("signup is bad", error);
+      console.error("signin is bad", error);
     }
   };
 
   const cardDetails = {
-    title: "Signup",
-    description: "Welcome! Please fill the details",
+    title: "Signin",
+    description: "Welcome back! Please fill the details",
   };
 
   return (
     <CardAuth title={cardDetails.title} description={cardDetails.description}>
       <FormControl>
         <form onSubmit={handleSubmit(onSubmit)}>
-          <FormLabel htmlFor="username">Username</FormLabel>
-          <Input
-            placeholder="depe"
-            type="text"
-            id="username"
-            {...register("username")}
-          />
-          {errors.username && (
-            <FormHelperText>{errors.username.message}</FormHelperText>
-          )}
           <FormLabel htmlFor="email">Email</FormLabel>
           <Input
             placeholder="depe@email.com"
@@ -105,12 +94,16 @@ const SignUp = () => {
             <FormHelperText>{errors.password.message}</FormHelperText>
           )}
           <Button mt="5" colorScheme="purple" type="submit" width="100%">
-            Submit
+            Signin
           </Button>
+          <Link to="/autn">
+            <Button mt="4" colorScheme="purple" variant="outline" width="100%">
+              Signin With Google
+            </Button>
+          </Link>
         </form>
       </FormControl>
     </CardAuth>
   );
 };
-
-export default SignUp;
+export default SignIn;

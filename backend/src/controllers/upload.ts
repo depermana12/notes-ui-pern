@@ -6,7 +6,7 @@ const uploadAvatar = asyncHandler(async (req, res) => {
   const { file } = req;
   if (!file) throw new UploadError("No file");
 
-  const userId = req.user.user_id;
+  const userId = req.user.id;
   const result = await uploadService.upload(file, userId);
   console.log(result);
 

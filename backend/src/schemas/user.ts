@@ -1,7 +1,13 @@
 export interface User {
-  user_id: number;
+  id: number;
   username: string;
   email: string;
   password: string;
   created_at: Date;
+}
+
+export interface RefreshToken {
+  id: number;
+  token: string;
+  expires_at: number;
 }

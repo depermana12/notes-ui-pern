@@ -15,10 +15,9 @@ export const getNotes = async (): Promise<Note[]> => {
 };
 
 export const getNote = async (id: number): Promise<Note> => {
-  const { rows } = await pool.query<Note>(
-    `SELECT * FROM notes WHERE note_id = $1`,
-    [id],
-  );
+  const { rows } = await pool.query<Note>(`SELECT * FROM notes WHERE id = $1`, [
+    id,
+  ]);
   return rows[0];
 };
 
@@ -58,7 +57,7 @@ export const updateNote = async (
   content: string,
 ): Promise<Note> => {
   const updatedNote = await pool.query(
-    `UPDATE notes SET title = $1, content = $2 WHERE note_id = $3 AND user_id = $4 RETURNING *`,
+    `UPDATE notes SET title = $1, content = $2 WHERE id = $3 AND user_id = $4 RETURNING *`,
     [noteId, userId, title, content],
   );
   return updatedNote.rows[0];
@@ -69,7 +68,7 @@ export const deleteNote = async (
   userId: number,
 ): Promise<boolean> => {
   const deletedNote = await pool.query(
-    `DELETE FROM notes WHERE note_id = $1 AND user_id = $2`,
+    `DELETE FROM notes WHERE id = $1 AND user_id = $2`,
     [noteId, userId],
   );
   return deletedNote.rowCount !== null && deletedNote.rowCount > 0;

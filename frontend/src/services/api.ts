@@ -20,11 +20,35 @@ class ApiService<T> {
   };
 
   post = async (axiosReqConfig: AxiosRequestConfig) => {
-    const result = await apiClient.post<FetchApiResponse<T>>(
-      this.apiResourcePath,
-      axiosReqConfig.data,
-    );
-    return result.data;
+    try {
+      const result = await apiClient.post<FetchApiResponse<T>>(
+        this.apiResourcePath,
+        axiosReqConfig.data,
+      );
+      return result.data;
+    } catch (error) {
+      return this.errorHandler(error);
+    }
+  };
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  private errorHandler = (error: any) => {
+    if (error.response) {
+      return {
+        message: error.response.data.message,
+        data: null,
+      };
+    } else if (error.request) {
+      return {
+        message: error.request,
+        data: null,
+      };
+    } else {
+      return {
+        message: error.message,
+        data: null,
+      };
+    }
   };
 }
 

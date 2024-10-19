@@ -1,14 +1,16 @@
 import * as db from "../database/user";
 import { User } from "../schemas/user";
-import { createJWT, hashPassword } from "../auth/authUtils";
+import { createJWT, createRefreshJWT, hashPassword } from "../auth/authUtils";
 import { ValidationError } from "../error/customError";
+import authService from "./authService";
+import expiresIn from "../utils/tokenAge";
 
 export const fetchAllUser = async (): Promise<User[]> => {
   return await db.findAllUsers();
 };
 
 export const fetchUserById = async (id: number): Promise<User | null> => {
-  return await db.findUserBy("user_id", id);
+  return await db.findUserBy("id", id);
 };
 
 export const fetchUserByEmail = async (email: string): Promise<User | null> => {
@@ -21,20 +23,52 @@ export const fetchUserByUsername = async (
   return await db.findUserBy("username", username);
 };
 
+interface SignInResponse {
+  token: string;
+  refreshToken: string;
+  username: string;
+  email: string;
+  cookieConfig: {
+    httpOnly: boolean;
+    secure: boolean;
+    sameSite: string;
+    maxAge: number;
+  };
+}
+
 export const saveUser = async (
   username: string,
   email: string,
   password: string,
-): Promise<string> => {
+): Promise<SignInResponse> => {
   const user = await fetchUserByEmail(email);
   if (user) throw new ValidationError("User already exists");
 
   const hashedPassword = await hashPassword(password);
   const newUser = await db.createUser(username, email, hashedPassword);
 
-  const { user_id, username: usernameToken } = newUser;
-  const token = createJWT({ user_id, username: usernameToken });
-  return token;
+  const token = createJWT(newUser);
+  const refreshToken = createRefreshJWT(newUser);
+
+  const cookieConfig = {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "strict",
+    maxAge: expiresIn.milliesecond(),
+  };
+  await authService.storeRefreshToken(
+    newUser.id,
+    refreshToken,
+    expiresIn.date(),
+  );
+
+  return {
+    token,
+    refreshToken,
+    username: newUser.username,
+    email: newUser.email,
+    cookieConfig,
+  };
 };
 
 export const modifyUserPassword = async (
