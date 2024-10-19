@@ -1,11 +1,12 @@
 import asyncHandler from "../middlewares/asyncHandler";
 import * as userService from "../services/user";
-import authService from "../services/authService";
+import authService from "../services/auth";
 import {
   loginSchema,
   resetPasswordSchema,
 } from "../validations/userValidation";
 import { UnauthorizedError, ValidationError } from "../error/customError";
+import { emptyRefreshToken } from "../services/refreshToken";
 
 export const signIn = asyncHandler(async (req, res) => {
   const { error } = loginSchema.validate(req.body);
@@ -38,7 +39,7 @@ export const signOut = asyncHandler(async (req, res) => {
   const targetRefreshToken = cookies.noteapp_refreshToken;
   // console.log(targetRefreshToken);
 
-  await authService.emptyRefreshToken(targetRefreshToken);
+  await emptyRefreshToken(targetRefreshToken);
 
   res.clearCookie("noteapp_refreshToken", { httpOnly: true });
   res.status(200).json({ message: "Refresh token deleted" });

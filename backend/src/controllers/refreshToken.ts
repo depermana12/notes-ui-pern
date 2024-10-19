@@ -1,8 +1,8 @@
 import { Request, Response } from "express";
-import authService from "../services/authService";
 import { UnauthorizedError } from "../error/customError";
 import expiresIn from "../utils/tokenAge";
 import asyncHandler from "../middlewares/asyncHandler";
+import { updateRefreshToken } from "../services/refreshToken";
 
 const refreshToken = asyncHandler(
   async (req: Request, res: Response): Promise<void> => {
@@ -20,7 +20,7 @@ const refreshToken = asyncHandler(
     }
 
     const { newAccessToken, newRefreshToken } =
-      await authService.updateRefreshToken(refreshJWT);
+      await updateRefreshToken(refreshJWT);
 
     res.cookie("noteapp_refreshToken", newRefreshToken, {
       httpOnly: true,

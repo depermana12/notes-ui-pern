@@ -12,54 +12,6 @@ export const findAllUsers = async (): Promise<User[]> => {
   return rows;
 };
 
-export const saveRefreshToken = async (
-  token: string,
-  userId: number,
-  expiresIn: Date,
-): Promise<RefreshToken> => {
-  const { rows } = await pool.query<RefreshToken>(
-    `INSERT INTO refresh_token(token, user_id, expires_at)
-       VALUES($1, $2, $3) RETURNING *`,
-    [token, userId, expiresIn],
-  );
-  return rows[0];
-};
-
-export const findRefreshToken = async (
-  userId: number,
-): Promise<RefreshToken | null> => {
-  const { rows } = await pool.query<RefreshToken>(
-    `SELECT * 
-       FROM refresh_token
-     WHERE user_id = $1`,
-    [userId],
-  );
-  return rows[0];
-};
-
-export const renewRefreshToken = async (
-  userId: number,
-  newToken: string,
-  expires: Date,
-): Promise<RefreshToken> => {
-  const { rows } = await pool.query<RefreshToken>(
-    `
-    UPDATE refresh_token SET token = $1, expires_at = $2 WHERE user_id = $3 RETURNING *
-    `,
-    [newToken, expires, userId],
-  );
-
-  return rows[0];
-};
-
-export const deleteRefreshToken = async (id: number): Promise<boolean> => {
-  const deleted = await pool.query(
-    `DELETE FROM refresh_token WHERE user_id = $1`,
-    [id],
-  );
-  return deleted.rowCount !== null && deleted.rowCount > 0;
-};
-
 export const findUserBy = async (
   field: Field,
   value: string | number,

@@ -1,11 +1,6 @@
 import jwt from "jsonwebtoken";
-import bycrypt from "bcrypt";
 import { UnauthorizedError } from "../error/customError";
-import { Token } from "../types/token";
-
-interface JWTOption {
-  expiresIn?: string | number;
-}
+import { Token, JWTOption } from "./authTokenTypes";
 
 export const createJWT = (user: Token, option: JWTOption = {}): string => {
   const token = jwt.sign(
@@ -43,15 +38,4 @@ export const verifyJWT = (
     }
     throw new UnauthorizedError("Invalid token");
   }
-};
-
-export const comparePassword = async (
-  password: string,
-  hashedPassword: string,
-): Promise<boolean> => {
-  return bycrypt.compare(password, hashedPassword);
-};
-
-export const hashPassword = async (password: string): Promise<string> => {
-  return bycrypt.hash(password, 10);
 };

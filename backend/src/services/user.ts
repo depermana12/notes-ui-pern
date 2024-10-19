@@ -1,9 +1,10 @@
 import * as db from "../database/user";
 import { User } from "../schemas/user";
-import { createJWT, createRefreshJWT, hashPassword } from "../auth/authUtils";
+import { createJWT, createRefreshJWT } from "../auth/authUtils";
+import { hashPassword } from "../auth/passwordUtils";
 import { ValidationError } from "../error/customError";
-import authService from "./authService";
 import expiresIn from "../utils/tokenAge";
+import { storeRefreshToken } from "./refreshToken";
 
 export const fetchAllUser = async (): Promise<User[]> => {
   return await db.findAllUsers();
@@ -56,11 +57,7 @@ export const saveUser = async (
     sameSite: "strict",
     maxAge: expiresIn.milliesecond(),
   };
-  await authService.storeRefreshToken(
-    newUser.id,
-    refreshToken,
-    expiresIn.date(),
-  );
+  await storeRefreshToken(newUser.id, refreshToken, expiresIn.date());
 
   return {
     token,
